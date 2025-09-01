@@ -2,12 +2,22 @@ from flask import Flask, render_template, Response
 import cv2
 import time
 import threading
+import os
 from ultralytics import YOLO
+import urllib.request
 
 app = Flask(__name__)
 
+# Ensure YOLO model exists
+MODEL_PATH = "yolov8n.pt"
+if not os.path.exists(MODEL_PATH):
+    print("Downloading YOLOv8 model...")
+    url = "https://github.com/ultralytics/ultralytics/releases/download/v8.0.50/yolov8n.pt"
+    urllib.request.urlretrieve(url, MODEL_PATH)
+    print("Download complete!")
+
 # Load YOLO model
-model = YOLO("yolov8n.pt")
+model = YOLO(MODEL_PATH)
 
 # Open video streams
 videos = [
@@ -24,7 +34,6 @@ current_timer = [0]
 lock = threading.Lock()
 
 def detect_vehicles():
-    """Detect vehicles in each lane, draw bounding boxes, and update traffic logic."""
     global lane_counts, signal_times
     results_list = [0] * len(videos)
 
@@ -32,7 +41,7 @@ def detect_vehicles():
         ret, frame = cap.read()
         if not ret:
             return None, 0
-        
+
         frame = cv2.resize(frame, (400, 400))
         results = model(frame)
 
@@ -45,7 +54,7 @@ def detect_vehicles():
 
         cv2.putText(frame, f"Vehicles: {vehicle_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         return frame, vehicle_count
-    
+
     threads = []
     frames = [None] * len(videos)
 
@@ -64,9 +73,7 @@ def detect_vehicles():
 
     return frames
 
-        
 def traffic_light_control():
-    """Control traffic lights based on priority of vehicle count."""
     global traffic_lights, current_timer
     while True:
         detect_vehicles()
@@ -81,13 +88,12 @@ def traffic_light_control():
                     traffic_lights[j] = "RED"
                 traffic_lights[i] = "GREEN"
                 current_timer[0] = signal_times[i]
-            
+
             while current_timer[0] > 0:
                 time.sleep(1)
                 current_timer[0] -= 1
 
 def generate_frames(lane_id):
-    """Generate video frames with bounding boxes and vehicle count."""
     while True:
         frames = detect_vehicles()
         if frames is None or frames[lane_id] is None:
@@ -113,7 +119,7 @@ def traffic_data():
 def video_feed(lane_id):
     return Response(generate_frames(lane_id), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
 if __name__ == '__main__':
     threading.Thread(target=traffic_light_control, daemon=True).start()
-    app.run(debug=True, threaded=True)
+    port = int(os.environ.get("PORT", 5000))  # Render dynamic port
+    app.run(host='0.0.0.0', port=port, threaded=True)
