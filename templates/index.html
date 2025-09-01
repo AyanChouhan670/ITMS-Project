@@ -3,134 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Traffic System</title>
+    <title>Smart Traffic System - Demo</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
         }
         .container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .lane-container {
-            width: 220px;
+            max-width: 800px;
+            margin: 0 auto;
             background: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-            font-size: 14px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         .traffic-light {
-            width: 50px;
-            height: 150px;
-            background: black;
-            border-radius: 8px;
-            padding: 8px;
-            margin: auto;
+            width: 80px;
+            height: 200px;
+            background: #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         .light {
-            width: 30px;
-            height: 30px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: gray; /* Default gray */
+            background: #666;
+            transition: all 0.3s ease;
         }
-        .green { background: green; }
-        .red { background: red; }
-        .orange { background: orange; }
+        .green { 
+            background: #00ff00; 
+            box-shadow: 0 0 20px #00ff00;
+        }
+        .red { 
+            background: #ff0000; 
+            box-shadow: 0 0 20px #ff0000;
+        }
+        .orange { 
+            background: #ffa500; 
+            box-shadow: 0 0 20px #ffa500;
+        }
         .lane-video {
             width: 100%;
-            border-radius: 5px;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
         }
         .timer-container {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin: 20px 0;
             color: #333;
         }
         .green-text {
-            color: green;
+            color: #00aa00;
             font-weight: bold;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 120px;
+            margin: 10px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .control-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s ease;
+        }
+        .control-btn:hover {
+            background: #0056b3;
+        }
+        .control-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px;
+        }
+        .status-yolo {
+            background: #28a745;
+            color: white;
+        }
+        .status-demo {
+            background: #ffc107;
+            color: #333;
+        }
+        .status-error {
+            background: #dc3545;
+            color: white;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .info-box h3 {
+            margin: 0 0 10px 0;
+            color: #0056b3;
+        }
+        .info-box p {
+            margin: 5px 0;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
-    <h1>Smart Traffic Management System</h1>
-
-    <div class="timer-container">
-        <span id="green-signal-text" class="green-text">Green Signal: Lane 1</span> - 
-        <span id="timer">{{ timer[0] }}</span> sec remaining
-    </div>
-
     <div class="container">
-        {% for i in range(4) %}
-        <div class="lane-container">
-            <div class="traffic-light">
-                <div class="light" id="red-light-{{ i }}"></div>
-                <div class="light" id="orange-light-{{ i }}"></div>
-                <div class="light" id="green-light-{{ i }}"></div>
-            </div>
-            <p>Lane {{ i+1 }}</p>
-            <p id="count-{{ i }}">Vehicles: {{ lane_counts[i] }}</p>
-            <p id="time-{{ i }}">Time: {{ signal_times[i] }}s</p>
-            <img class="lane-video" src="/video_feed/{{ i }}" alt="Lane {{ i+1 }} Live">
+        <h1>🚦 Smart Traffic Management System - Demo</h1>
+
+        <!-- Status Badge -->
+        <div id="status-badge" class="status-badge">
+            {% if yolo_available %}
+                <span class="status-yolo">🤖 YOLO Mode Active</span>
+            {% else %}
+                <span class="status-demo">🎭 Demo Mode</span>
+            {% endif %}
         </div>
-        {% endfor %}
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <h3>ℹ️ System Information</h3>
+            {% if yolo_available %}
+                <p><strong>Mode:</strong> YOLO vehicle detection active</p>
+                <p><strong>Detection:</strong> Real-time vehicle counting</p>
+                <p><strong>Performance:</strong> AI-powered analysis</p>
+            {% else %}
+                <p><strong>Mode:</strong> Demo simulation active</p>
+                <p><strong>Detection:</strong> Simulated vehicle counting</p>
+                <p><strong>Performance:</strong> Lightweight demo mode</p>
+            {% endif %}
+        </div>
+
+        <div class="timer-container">
+            <span id="signal-status" class="green-text">Red Signal</span> - 
+            <span id="timer">{{ timer }}</span> sec remaining
+        </div>
+
+        <div class="traffic-light">
+            <div class="light" id="red-light"></div>
+            <div class="light" id="orange-light"></div>
+            <div class="light" id="green-light"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Vehicles Detected</div>
+                <div class="stat-value" id="vehicle-count">{{ vehicle_count }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Signal Duration</div>
+                <div class="stat-value" id="signal-time">{{ signal_time }}s</div>
+            </div>
+        </div>
+
+        <div>
+            <button class="control-btn" id="toggle-btn" onclick="toggleLight()">
+                Toggle Traffic Light
+            </button>
+            <button class="control-btn" id="auto-btn" onclick="toggleAuto()">
+                Auto Mode: OFF
+            </button>
+            {% if not yolo_available %}
+                <button class="control-btn" onclick="restartYOLO()" style="background: #28a745;">
+                    🔄 Restart YOLO
+                </button>
+            {% endif %}
+        </div>
+
+        <img class="lane-video" src="/video_feed" alt="Live Traffic Feed" id="video-feed">
+        
+        <p style="color: #666; margin-top: 20px;">
+            <strong>Demo Mode:</strong> Single lane traffic monitoring with 
+            {% if yolo_available %}YOLO vehicle detection{% else %}simulated vehicle detection{% endif %}
+        </p>
     </div>
 
     <script>
-        function updateTrafficLights() {
+        let autoMode = false;
+        let autoInterval;
+        let yoloAvailable = {{ 'true' if yolo_available else 'false' }};
+
+        function updateTrafficLight() {
             fetch('/traffic_data')
                 .then(response => response.json())
                 .then(data => {
-                    let activeLane = -1;
-                    let remainingTime = data.timer;
+                    let redLight = document.getElementById("red-light");
+                    let orangeLight = document.getElementById("orange-light");
+                    let greenLight = document.getElementById("green-light");
                     let timerDiv = document.getElementById("timer");
+                    let vehicleCountDiv = document.getElementById("vehicle-count");
+                    let signalTimeDiv = document.getElementById("signal-time");
+                    let signalStatusDiv = document.getElementById("signal-status");
+                    let statusBadge = document.getElementById("status-badge");
 
-                    for (let i = 0; i < 4; i++) {
-                        let redLight = document.getElementById("red-light-" + i);
-                        let orangeLight = document.getElementById("orange-light-" + i);
-                        let greenLight = document.getElementById("green-light-" + i);
-                        let timeDiv = document.getElementById("time-" + i);
-                        let countDiv = document.getElementById("count-" + i);
+                    // Update YOLO status
+                    yoloAvailable = data.yolo_available;
+                    if (yoloAvailable) {
+                        statusBadge.innerHTML = '<span class="status-yolo">🤖 YOLO Mode Active</span>';
+                    } else {
+                        statusBadge.innerHTML = '<span class="status-demo">🎭 Demo Mode</span>';
+                    }
 
-                        // Reset all lights to gray
-                        redLight.style.backgroundColor = "gray";
-                        orangeLight.style.backgroundColor = "gray";
-                        greenLight.style.backgroundColor = "gray";
+                    // Reset all lights
+                    redLight.className = "light";
+                    orangeLight.className = "light";
+                    greenLight.className = "light";
 
-                        if (data.lights[i] === "GREEN") {
-                            activeLane = i + 1;
-                            if (remainingTime > 3) {
-                                greenLight.style.backgroundColor = "green";  // Normal Green Signal
-                            } else {
-                                orangeLight.style.backgroundColor = "orange";  // Turn Orange in Last 3 Sec
-                            }
+                    if (data.light === "GREEN") {
+                        if (data.timer > 3) {
+                            greenLight.className = "light green";
+                            signalStatusDiv.innerText = "Green Signal";
+                            signalStatusDiv.className = "green-text";
                         } else {
-                            redLight.style.backgroundColor = "red";  // Default Red Light for inactive lanes
+                            orangeLight.className = "light orange";
+                            signalStatusDiv.innerText = "Orange Signal (Warning)";
+                            signalStatusDiv.className = "";
+                            signalStatusDiv.style.color = "#ffa500";
                         }
-
-                        timeDiv.innerText = "Time: " + data.signal_times[i] + "s";
-                        countDiv.innerText = "Vehicles: " + data.lane_counts[i];
+                    } else {
+                        redLight.className = "light red";
+                        signalStatusDiv.innerText = "Red Signal";
+                        signalStatusDiv.className = "";
+                        signalStatusDiv.style.color = "#ff0000";
                     }
 
-                    if (activeLane !== -1) {
-                        document.getElementById("green-signal-text").innerText = "Green Signal: Lane " + activeLane;
-                    }
-
-                    timerDiv.innerText = remainingTime;
+                    timerDiv.innerText = data.timer;
+                    vehicleCountDiv.innerText = data.vehicle_count;
+                    signalTimeDiv.innerText = data.signal_time + "s";
                 })
-                .catch(error => console.error("Error fetching traffic data:", error));
+                .catch(error => {
+                    console.error("Error fetching traffic data:", error);
+                    showError("Failed to fetch traffic data. Check server connection.");
+                });
         }
 
-        setInterval(updateTrafficLights, 1000);
+        function toggleLight() {
+            fetch('/toggle_light')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showError("Error toggling light: " + data.error);
+                    } else {
+                        updateTrafficLight();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error toggling light:", error);
+                    showError("Failed to toggle traffic light.");
+                });
+        }
+
+        function toggleAuto() {
+            autoMode = !autoMode;
+            const btn = document.getElementById("auto-btn");
+            
+            if (autoMode) {
+                btn.innerText = "Auto Mode: ON";
+                btn.style.background = "#28a745";
+                // Start auto mode - update timer every second
+                autoInterval = setInterval(() => {
+                    fetch('/update_timer')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                showError("Error updating timer: " + data.error);
+                            } else {
+                                updateTrafficLight();
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error updating timer:", error);
+                            showError("Failed to update timer.");
+                        });
+                }, 1000);
+            } else {
+                btn.innerText = "Auto Mode: OFF";
+                btn.style.background = "#007bff";
+                clearInterval(autoInterval);
+            }
+        }
+
+        function restartYOLO() {
+            fetch('/restart')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status.includes("successfully")) {
+                        showMessage("YOLO model restarted successfully!", "success");
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showError("Failed to restart YOLO: " + data.status);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error restarting YOLO:", error);
+                    showError("Failed to restart YOLO model.");
+                });
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "error-message";
+            errorDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            document.querySelector(".container").insertBefore(errorDiv, document.querySelector(".container").firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = type === "success" ? "info-box" : "error-message";
+            messageDiv.innerHTML = `<strong>Message:</strong> ${message}`;
+            document.querySelector(".container").insertBefore(messageDiv, document.querySelector(".container").firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Update traffic light every second
+        setInterval(updateTrafficLight, 1000);
+        
+        // Initial update
+        updateTrafficLight();
+
+        // Handle video feed errors
+        document.getElementById("video-feed").onerror = function() {
+            showError("Video feed failed to load. Check if the server is running.");
+        };
     </script>
 </body>
 </html>

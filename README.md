@@ -1,59 +1,117 @@
-# ITMS-Project
+# Smart Traffic Management System - Demo
 
-**Intelligent Traffic Management System (ITMS)**
-
-This project detects vehicles in four lanes using **YOLOv8** and dynamically controls traffic lights based on vehicle counts. It is built with **Python, Flask, OpenCV, and Ultralytics YOLO**.
+A single-lane traffic monitoring system using YOLO object detection for vehicle counting and traffic light control.
 
 ## Features
-- Real-time vehicle detection from multiple video streams
-- Counts vehicles in each lane
-- Dynamically adjusts traffic light timings based on traffic density
-- Live video feed with bounding boxes for detected vehicles
-- Traffic data available via Flask web interface
 
-## Folder Structure
-```
-ITMS-Project/
-│
-├─ app.py                 # Main Flask application
-├─ requirements.txt       # Python dependencies
-├─ README.md              # Project description
-├─ Video/                 # Lane videos (lane1.mp4, lane2.mp4, etc.)
-├─ templates/             # HTML templates (index.html)
-└─ static/                # Optional CSS/images
-```
+- 🚦 **Single Lane Monitoring**: Focused on one traffic lane for demo purposes
+- 🤖 **YOLO Vehicle Detection**: Uses YOLOv8 nano model for real-time vehicle detection
+- 📊 **Real-time Statistics**: Live vehicle count and signal timing
+- 🎮 **Interactive Controls**: Manual traffic light toggle and auto mode
+- 🌐 **Web Interface**: Clean, responsive web dashboard
+- 🚀 **Render Ready**: Optimized for free-tier deployment
 
-## Installation
-1. Clone the repository:
+## Demo Mode
+
+This version is optimized for demonstration and deployment:
+- **Single video stream** (lane1.mp4)
+- **Single-threaded** for Render free-tier compatibility
+- **Memory efficient** - won't crash on limited resources
+- **Full demo** available locally for recruiters
+
+## Local Development
+
+### Prerequisites
+- Python 3.9+
+- OpenCV
+- YOLO model (automatically downloaded)
+
+### Installation
 ```bash
-git clone https://github.com/AyanChouhan670/ITMS-Project.git
+# Clone the repository
+git clone <your-repo-url>
 cd ITMS-Project
-```
 
-2. Create a virtual environment:
-```bash
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS/Linux
-source .venv/bin/activate
-```
-
-3. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-## Running the Project
-1. Make sure the `Video/` folder contains your lane videos (`lane1.mp4`, `lane2.mp4`, `lane3.mp4`, `lane4.mp4`).  
-2. Run the Flask app:
-```bash
+# Run the application
 python app.py
 ```
 
-3. Open your browser and go to:
-```
-http://127.0.0.1:5000
+### Local Demo
+For full multi-lane demo with recruiters:
+1. Modify `app.py` to use multiple video streams
+2. Enable threading for better performance
+3. Use all available video files
+
+## Deployment on Render
+
+### Free Tier Deployment
+1. **Connect Repository**: Link your GitHub repo to Render
+2. **Auto-deploy**: Render will use `render.yaml` for configuration
+3. **Environment**: Python 3.9 with single worker/thread
+4. **Memory**: Optimized for 512MB free tier
+
+### Manual Deployment
+```bash
+# Build command
+pip install -r requirements.txt
+
+# Start command
+gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1
 ```
 
-You will see live video
+## Technical Details
+
+### Architecture
+- **Flask Backend**: Lightweight web framework
+- **OpenCV**: Video processing and frame handling
+- **YOLOv8 Nano**: Efficient object detection model
+- **Single Thread**: Memory-efficient processing
+
+### Performance Optimizations
+- Frame resizing (400x300) for faster processing
+- Disabled verbose logging in production
+- Single video stream processing
+- Efficient memory management
+
+### API Endpoints
+- `/`: Main dashboard
+- `/video_feed`: Live video stream
+- `/traffic_data`: Real-time traffic statistics
+- `/toggle_light`: Manual traffic light control
+- `/update_timer`: Timer management
+
+## File Structure
+
+```
+ITMS-Project/
+├── app.py              # Main Flask application
+├── requirements.txt    # Python dependencies
+├── render.yaml        # Render deployment config
+├── yolov8n.pt         # YOLO model (kept in repo)
+├── Video/
+│   └── lane1.mp4      # Demo video (kept in repo)
+└── templates/
+    └── index.html     # Web interface
+```
+
+## Usage
+
+1. **Access Dashboard**: Open the web interface
+2. **Monitor Traffic**: Watch real-time vehicle detection
+3. **Control Lights**: Use toggle button for manual control
+4. **Auto Mode**: Enable automatic traffic light timing
+5. **View Stats**: Monitor vehicle count and signal duration
+
+## Notes for Recruiters
+
+- **Local Demo**: For full multi-lane experience, run locally
+- **Production Ready**: Single-lane version deployed on Render
+- **Scalable**: Architecture supports expansion to multiple lanes
+- **Professional**: Clean code with proper error handling
+
+## License
+
+This project is for demonstration purposes.
