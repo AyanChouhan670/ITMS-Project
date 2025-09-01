@@ -22,7 +22,7 @@ This version is optimized for demonstration and deployment:
 ## Local Development
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.11+
 - OpenCV
 - YOLO model (automatically downloaded)
 
@@ -50,7 +50,7 @@ For full multi-lane demo with recruiters:
 ### Free Tier Deployment
 1. **Connect Repository**: Link your GitHub repo to Render
 2. **Auto-deploy**: Render will use `render.yaml` for configuration
-3. **Environment**: Python 3.9 with single worker/thread
+3. **Environment**: Python 3.11 with single worker/thread
 4. **Memory**: Optimized for 512MB free tier
 
 ### Manual Deployment
@@ -62,6 +62,12 @@ pip install -r requirements.txt
 gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1
 ```
 
+### Deployment Fix
+If you encounter build errors:
+- **Python Version**: Use Python 3.11 (specified in `runtime.txt`)
+- **Dependencies**: Simplified requirements.txt for better compatibility
+- **Build Issues**: Check Render logs for specific error messages
+
 ## Technical Details
 
 ### Architecture
@@ -71,7 +77,7 @@ gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1
 - **Single Thread**: Memory-efficient processing
 
 ### Performance Optimizations
-- Frame resizing (400x300) for faster processing
+- Frame resizing (320x240) for faster processing
 - Disabled verbose logging in production
 - Single video stream processing
 - Efficient memory management
@@ -82,13 +88,16 @@ gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1
 - `/traffic_data`: Real-time traffic statistics
 - `/toggle_light`: Manual traffic light control
 - `/update_timer`: Timer management
+- `/health`: Health check for monitoring
+- `/restart`: Restart YOLO model if needed
 
 ## File Structure
 
 ```
 ITMS-Project/
 ├── app.py              # Main Flask application
-├── requirements.txt    # Python dependencies
+├── requirements.txt    # Python dependencies (simplified)
+├── runtime.txt         # Python version specification
 ├── render.yaml        # Render deployment config
 ├── yolov8n.pt         # YOLO model (kept in repo)
 ├── Video/
@@ -104,6 +113,19 @@ ITMS-Project/
 3. **Control Lights**: Use toggle button for manual control
 4. **Auto Mode**: Enable automatic traffic light timing
 5. **View Stats**: Monitor vehicle count and signal duration
+
+## Troubleshooting
+
+### Common Issues
+- **Build Failures**: Ensure Python 3.11 is specified
+- **Memory Errors**: App automatically falls back to demo mode
+- **Video Issues**: Check if lane1.mp4 exists in Video folder
+
+### Render Deployment
+- **Python Version**: 3.11.7 (specified in render.yaml)
+- **Dependencies**: Simplified requirements.txt
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 1`
 
 ## Notes for Recruiters
 
