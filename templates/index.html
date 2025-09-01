@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Traffic System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .lane-container {
+            width: 220px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+        }
+        .traffic-light {
+            width: 50px;
+            height: 150px;
+            background: black;
+            border-radius: 8px;
+            padding: 8px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .light {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: gray; /* Default gray */
+        }
+        .green { background: green; }
+        .red { background: red; }
+        .orange { background: orange; }
+        .lane-video {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .timer-container {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .green-text {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Traffic Management System</h1>
+
+    <div class="timer-container">
+        <span id="green-signal-text" class="green-text">Green Signal: Lane 1</span> - 
+        <span id="timer">{{ timer[0] }}</span> sec remaining
+    </div>
+
+    <div class="container">
+        {% for i in range(4) %}
+        <div class="lane-container">
+            <div class="traffic-light">
+                <div class="light" id="red-light-{{ i }}"></div>
+                <div class="light" id="orange-light-{{ i }}"></div>
+                <div class="light" id="green-light-{{ i }}"></div>
+            </div>
+            <p>Lane {{ i+1 }}</p>
+            <p id="count-{{ i }}">Vehicles: {{ lane_counts[i] }}</p>
+            <p id="time-{{ i }}">Time: {{ signal_times[i] }}s</p>
+            <img class="lane-video" src="/video_feed/{{ i }}" alt="Lane {{ i+1 }} Live">
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function updateTrafficLights() {
+            fetch('/traffic_data')
+                .then(response => response.json())
+                .then(data => {
+                    let activeLane = -1;
+                    let remainingTime = data.timer;
+                    let timerDiv = document.getElementById("timer");
+
+                    for (let i = 0; i < 4; i++) {
+                        let redLight = document.getElementById("red-light-" + i);
+                        let orangeLight = document.getElementById("orange-light-" + i);
+                        let greenLight = document.getElementById("green-light-" + i);
+                        let timeDiv = document.getElementById("time-" + i);
+                        let countDiv = document.getElementById("count-" + i);
+
+                        // Reset all lights to gray
+                        redLight.style.backgroundColor = "gray";
+                        orangeLight.style.backgroundColor = "gray";
+                        greenLight.style.backgroundColor = "gray";
+
+                        if (data.lights[i] === "GREEN") {
+                            activeLane = i + 1;
+                            if (remainingTime > 3) {
+                                greenLight.style.backgroundColor = "green";  // Normal Green Signal
+                            } else {
+                                orangeLight.style.backgroundColor = "orange";  // Turn Orange in Last 3 Sec
+                            }
+                        } else {
+                            redLight.style.backgroundColor = "red";  // Default Red Light for inactive lanes
+                        }
+
+                        timeDiv.innerText = "Time: " + data.signal_times[i] + "s";
+                        countDiv.innerText = "Vehicles: " + data.lane_counts[i];
+                    }
+
+                    if (activeLane !== -1) {
+                        document.getElementById("green-signal-text").innerText = "Green Signal: Lane " + activeLane;
+                    }
+
+                    timerDiv.innerText = remainingTime;
+                })
+                .catch(error => console.error("Error fetching traffic data:", error));
+        }
+
+        setInterval(updateTrafficLights, 1000);
+    </script>
+</body>
+</html>
