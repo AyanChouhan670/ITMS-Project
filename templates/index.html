@@ -2,391 +2,195 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Traffic System - Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Traffic Control Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-        .traffic-light {
-            width: 80px;
-            height: 200px;
-            background: #333;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        .light {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #666;
-            transition: all 0.3s ease;
-        }
-        .green { 
-            background: #00ff00; 
-            box-shadow: 0 0 20px #00ff00;
-        }
-        .red { 
-            background: #ff0000; 
-            box-shadow: 0 0 20px #ff0000;
-        }
-        .orange { 
-            background: #ffa500; 
-            box-shadow: 0 0 20px #ffa500;
-        }
-        .lane-video {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin: 20px 0;
-        }
-        .timer-container {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #333;
-        }
-        .green-text {
-            color: #00aa00;
-            font-weight: bold;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .stat-box {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            min-width: 120px;
-            margin: 10px;
-        }
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        .control-btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
-            transition: background 0.3s ease;
-        }
-        .control-btn:hover {
-            background: #0056b3;
-        }
-        .control-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            margin: 10px;
-        }
-        .status-yolo {
-            background: #28a745;
-            color: white;
-        }
-        .status-demo {
-            background: #ffc107;
-            color: #333;
-        }
-        .status-error {
-            background: #dc3545;
-            color: white;
-        }
-        .info-box {
-            background: #e7f3ff;
-            border: 1px solid #b3d9ff;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        .info-box h3 {
-            margin: 0 0 10px 0;
-            color: #0056b3;
-        }
-        .info-box p {
-            margin: 5px 0;
-            color: #333;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .error-message {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #721c24;
-        }
+        :root { --bg:#0b1020; --panel:#0c1226; --panel-2:#111a35; --panel-3:#0f1530; --text:#eef2ff; --muted:#a5b4fc; --accent:#22d3ee; --accent-2:#a78bfa; --warning:#fbbf24; --danger:#f87171; --border:#243056; --chip:#0a1124; --success:#34d399; }
+        * { box-sizing:border-box; } html,body{ height:100%; }
+        body{ margin:0; display:flex; color:var(--text); background: radial-gradient(1200px 600px at 0% -10%, #0a1130, var(--bg) 45%), linear-gradient(180deg, #0a0f25 0%, #0b1020 100%); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+        body::before{ content:""; position:fixed; inset:-10%; pointer-events:none; opacity:.15; background: radial-gradient(1200px 600px at 120% 10%, #3b82f6, transparent 50%), radial-gradient(800px 400px at -10% 120%, #22d3ee, transparent 50%); filter: blur(40px); animation: floatbg 18s ease-in-out infinite alternate; }
+        @keyframes floatbg{ from{ transform:translateY(-12px);} to{ transform:translateY(12px);} }
+        .sidebar{ width:250px; flex:0 0 250px; background: linear-gradient(180deg,var(--panel),var(--panel-2)); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:14px; position:sticky; top:0; height:100vh; z-index:20; transition: transform .25s ease, width .25s ease; }
+        .brand{ display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.4px; padding:6px 8px; }
+        .brand-badge{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; color:#06121f; font-weight:900; background: conic-gradient(from 180deg at 50% 50%, var(--accent), var(--accent-2), var(--success), var(--accent)); box-shadow: 0 0 24px rgba(167,139,250,.35), inset 0 0 18px rgba(34,211,238,.25); animation: spin-slow 12s linear infinite; }
+        @keyframes spin-slow{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+        .nav-group{ margin-top:10px; display:grid; gap:6px; }
+        .nav-item{ padding:10px 12px; border-radius:12px; color:var(--muted); border:1px solid transparent; cursor:default; display:flex; justify-content:space-between; align-items:center; transition:.2s ease; }
+        .nav-item.active, .nav-item:hover{ background:var(--panel-3); color:var(--text); border-color:var(--border); }
+        .divider{ border-top:1px solid var(--border); margin:6px 0; }
+        .hint{ font-size:12px; color:var(--muted); }
+        @media (max-width:1024px){ .sidebar{ position:fixed; left:0; top:0; height:100%; transform:translateX(-100%); width:240px; flex:0 0 240px; } body.sidebar-open .sidebar{ transform:translateX(0);} }
+        .main{ flex:1; display:flex; flex-direction:column; min-width:0; }
+        header{ position:sticky; top:0; z-index:10; backdrop-filter:saturate(1.2) blur(10px); background: rgba(10,16,32,.55); border-bottom:1px solid var(--border); }
+        .topbar{ max-width:1300px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+        .chips{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+        .chip{ background: linear-gradient(180deg,#0b1631,#0b1226); border:1px solid var(--border); color:var(--text); padding:9px 14px; border-radius:999px; font-size:13px; display:inline-flex; gap:8px; align-items:center; box-shadow: 0 8px 20px rgba(0,0,0,.25), inset 0 0 12px rgba(59,130,246,.12); }
+        .chip b{ color:white; }
+        .menu-btn{ display:none; border:1px solid var(--border); background:var(--panel-3); color:var(--text); border-radius:10px; padding:8px 10px; font-weight:800; }
+        @media (max-width:1024px){ .menu-btn{ display:inline-block; } }
+        main{ max-width:1300px; margin:18px auto; padding:0 12px 20px; display:grid; grid-template-columns: 1fr 360px; gap:18px; }
+        @media (max-width:1200px){ main{ grid-template-columns:1fr; } }
+        .kpis{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:14px; }
+        @media (max-width:900px){ .kpis{ grid-template-columns:1fr; } }
+        .kpi{ background: linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--border); border-radius:14px; padding:14px; display:grid; gap:6px; box-shadow: 0 12px 28px rgba(0,0,0,.3); }
+        .kpi .label{ color:var(--muted); font-size:12px; }
+        .kpi .value{ font-size:26px; font-weight:800; letter-spacing:.4px; background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .grid{ display:grid; grid-template-columns: repeat(2, minmax(0,560px)); gap:16px; justify-content:center; }
+        @media (max-width:1180px){ .grid{ grid-template-columns: repeat(2, minmax(0,520px)); } }
+        @media (max-width:1080px){ .grid{ grid-template-columns: 1fr; } }
+        .card{ background: linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow: 0 14px 34px rgba(0,0,0,.35); transform: translateY(0); transition: transform .2s ease, box-shadow .2s ease; }
+        .card:hover{ transform: translateY(-2px); box-shadow: 0 18px 42px rgba(0,0,0,.4); }
+        .card-head{ padding:14px 14px 0 14px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .title{ font-size:16px; font-weight:800; letter-spacing:.3px; }
+        .badge-priority{ background: linear-gradient(135deg,var(--warning),#fde68a); color:#0b0b0b; padding:6px 12px; border-radius:999px; font-weight:900; font-size:11px; border:0; display:none; animation: pop 1s ease infinite alternate; }
+        @keyframes pop{ from{ transform:translateY(0);} to{ transform:translateY(-2px);} }
+        .meta{ display:flex; gap:14px; color:var(--muted); padding:8px 14px 12px 14px; font-size:13px; flex-wrap:wrap; }
+        .meta span{ color:var(--text); font-weight:700; }
+        .lights-n-video{ display:grid; grid-template-columns:70px 1fr; gap:12px; padding:0 14px 14px 14px; align-items:start; }
+        @media (max-width:560px){ .lights-n-video{ grid-template-columns:1fr; } }
+        .traffic-light{ width:54px; height:162px; background:#0b0f1a; border:1px solid var(--border); border-radius:10px; padding:8px; display:grid; gap:10px; align-content:center; justify-self:center; }
+        .light{ width:30px; height:30px; border-radius:50%; background:#1b2744; box-shadow:inset 0 0 10px #081025; border:1px solid #1c2a44; transition:filter .2s ease; }
+        .light.on.red{ background:radial-gradient(circle at 30% 30%, #ffc9c9, var(--danger)); box-shadow:0 0 18px var(--danger); }
+        .light.on.orange{ background:radial-gradient(circle at 30% 30%, #ffe6b3, var(--warning)); box-shadow:0 0 18px var(--warning); }
+        .light.on.green{ background:radial-gradient(circle at 30% 30%, #b6fff0, var(--success)); box-shadow:0 0 18px var(--success); }
+        .video-wrap{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:linear-gradient(180deg,#000,#020617); box-shadow: inset 0 0 40px rgba(59,130,246,.1); }
+        .lane-video{ width:100%; display:block; aspect-ratio:16/10; max-height:300px; object-fit:cover; }
+        @media (max-width:560px){ .lane-video{ max-height:220px; aspect-ratio:16/10; } }
+        .eta-bar{ height:8px; background:#0b0f1a; border:1px solid var(--border); border-radius:999px; overflow:hidden; margin:8px 14px 14px 14px; }
+        .eta-fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .35s ease; }
+        .panel{ background: linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow: 0 12px 28px rgba(0,0,0,.3); }
+        .panel h3{ margin:0 0 10px; font-size:14px; letter-spacing:.3px; color:var(--text); }
+        .controls{ display:grid; gap:10px; }
+        .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--muted); font-size:13px; }
+        .pill{ border:1px solid var(--border); background:var(--panel-3); color:var(--text); border-radius:999px; padding:6px 10px; font-weight:800; }
+        .btn{ position:relative; border:1px solid transparent; color:#06121f; border-radius:12px; padding:10px 14px; font-weight:900; cursor:pointer; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 10px 24px rgba(34,211,238,.25), inset 0 -2px 0 rgba(0,0,0,.2); overflow:hidden; transition: transform .12s ease, box-shadow .2s ease; }
+        .btn::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,255,255,.2), transparent 30%, transparent 70%, rgba(255,255,255,.2)); transform:translateX(-100%); }
+        .btn:hover{ transform: translateY(-1px); box-shadow:0 14px 32px rgba(167,139,250,.28), inset 0 -2px 0 rgba(0,0,0,.2); }
+        .btn:hover::after{ animation: shimmer 1.2s ease; }
+        @keyframes shimmer{ from{ transform:translateX(-100%);} to{ transform:translateX(100%);} }
+        .btn.ghost{ background:none; color:var(--text); border-color:var(--border); }
+        @media (max-width:1024px){ .chips{ justify-content:flex-start; } }
+        @media (max-width:768px){ .row{ flex-wrap:wrap; } .chips{ gap:8px; } }
+        /* Analytics canvas styles */
+        .chart { width: 100%; height: 220px; border:1px solid var(--border); border-radius:10px; background: var(--panel-3); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚦 Smart Traffic Management System - Demo</h1>
-
-        <!-- Status Badge -->
-        <div id="status-badge" class="status-badge">
-            {% if yolo_available %}
-                <span class="status-yolo">🤖 YOLO Mode Active</span>
-            {% else %}
-                <span class="status-demo">🎭 Demo Mode</span>
-            {% endif %}
+    <aside class="sidebar">
+        <div class="brand"><div class="brand-badge">S</div> Smart Traffic</div>
+        <div class="nav-group">
+            <div class="nav-item active">Dashboard <span>●</span></div>
+            <div class="nav-item">Analytics <span>●</span></div>
+            <div class="nav-item">Settings <span>—</span></div>
         </div>
+        <div class="divider"></div>
+        <div class="hint">Tip: adjust INFER_EVERY & COUNT_SMOOTH_ALPHA for performance.</div>
+    </aside>
 
-        <!-- Info Box -->
-        <div class="info-box">
-            <h3>ℹ️ System Information</h3>
-            {% if yolo_available %}
-                <p><strong>Mode:</strong> YOLO vehicle detection active</p>
-                <p><strong>Detection:</strong> Real-time vehicle counting</p>
-                <p><strong>Performance:</strong> AI-powered analysis</p>
-            {% else %}
-                <p><strong>Mode:</strong> Demo simulation active</p>
-                <p><strong>Detection:</strong> Simulated vehicle counting</p>
-                <p><strong>Performance:</strong> Lightweight demo mode</p>
-            {% endif %}
-        </div>
-
-        <div class="timer-container">
-            <span id="signal-status" class="green-text">Red Signal</span> - 
-            <span id="timer">{{ timer }}</span> sec remaining
-        </div>
-
-        <div class="traffic-light">
-            <div class="light" id="red-light"></div>
-            <div class="light" id="orange-light"></div>
-            <div class="light" id="green-light"></div>
-        </div>
-
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-label">Vehicles Detected</div>
-                <div class="stat-value" id="vehicle-count">{{ vehicle_count }}</div>
+    <div class="main">
+        <header>
+            <div class="topbar">
+                <button class="menu-btn" id="btn-menu">☰</button>
+                <div style="font-weight:800; letter-spacing:.4px;">Traffic Control Dashboard</div>
+                <div class="chips">
+                    <div class="chip">Total <b id="chip-total">0</b></div>
+                    <div class="chip">Priority <b id="chip-priority">Lane 1</b></div>
+                    <div class="chip">Cycle <b><span id="timer">{{ timer[0] }}</span>s</b></div>
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-label">Signal Duration</div>
-                <div class="stat-value" id="signal-time">{{ signal_time }}s</div>
+        </header>
+
+        <main>
+            <section>
+                <div class="kpis">
+                    <div class="kpi"><div class="label">Active Lanes</div><div class="value">4</div></div>
+                    <div class="kpi"><div class="label">Total Vehicles</div><div class="value" id="kpi-total">0</div></div>
+                    <div class="kpi"><div class="label">Current Priority</div><div class="value" id="kpi-priority">Lane 1</div></div>
+    </div>
+
+                <div class="grid">
+        {% for i in range(4) %}
+                    <div class="card">
+                        <div class="card-head">
+                            <div class="title">Lane {{ i+1 }}</div>
+                            <div class="badge-priority" id="badge-{{ i }}">PRIORITY</div>
+                        </div>
+                        <div class="meta">
+                            <div>Vehicles: <span id="count-{{ i }}">{{ lane_counts[i] }}</span></div>
+                            <div>ETA: <span id="time-{{ i }}">{{ signal_times[i] }}s</span></div>
+                        </div>
+                        <div class="lights-n-video">
+            <div class="traffic-light">
+                <div class="light" id="red-light-{{ i }}"></div>
+                <div class="light" id="orange-light-{{ i }}"></div>
+                <div class="light" id="green-light-{{ i }}"></div>
             </div>
+                            <div class="video-wrap"><img class="lane-video" src="/video_feed/{{ i }}" alt="Lane {{ i+1 }} Live"></div>
+                        </div>
+                        <div class="eta-bar"><div class="eta-fill" id="eta-fill-{{ i }}"></div></div>
         </div>
+        {% endfor %}
+                </div>
+            </section>
 
-        <div>
-            <button class="control-btn" id="toggle-btn" onclick="toggleLight()">
-                Toggle Traffic Light
-            </button>
-            <button class="control-btn" id="auto-btn" onclick="toggleAuto()">
-                Auto Mode: OFF
-            </button>
-            {% if not yolo_available %}
-                <button class="control-btn" onclick="restartYOLO()" style="background: #28a745;">
-                    🔄 Restart YOLO
-                </button>
-            {% endif %}
-        </div>
-
-        <img class="lane-video" src="/video_feed" alt="Live Traffic Feed" id="video-feed">
-        
-        <p style="color: #666; margin-top: 20px;">
-            <strong>Demo Mode:</strong> Single lane traffic monitoring with 
-            {% if yolo_available %}YOLO vehicle detection{% else %}simulated vehicle detection{% endif %}
-        </p>
+            <section>
+                <div class="panel">
+                    <h3>Controls</h3>
+                    <div class="controls">
+                        <div class="row"><div>Refresh Data</div><button class="btn" id="btn-refresh">Refresh</button></div>
+                        <div class="row"><div>Priority Lane</div><span class="pill" id="pill-priority">Lane 1</span></div>
+                        <div class="row"><div>Total Vehicles</div><span class="pill" id="pill-total">0</span></div>
+                        <div class="row"><div>Theme</div><button class="btn ghost" id="btn-theme">Toggle Glow</button></div>
+                    </div>
+                </div>
+                <div style="height:12px;"></div>
+                <div class="panel">
+                    <h3>Analytics</h3>
+                    <canvas id="chart" class="chart"></canvas>
+                </div>
+                <div style="height:12px;"></div>
+                <div class="panel">
+                    <h3>Activity Log</h3>
+                    <div id="log" style="max-height:260px; overflow:auto; border:1px solid var(--border); background: var(--panel-3); border-radius: 10px; padding: 10px; font-size: 12px; color: var(--muted);"></div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script>
-        let autoMode = false;
-        let autoInterval;
-        let yoloAvailable = {{ 'true' if yolo_available else 'false' }};
-
-        function updateTrafficLight() {
+        let prevPriority = 0, prevTotals = 0; let chartCtx, chartData;
+        function logLine(msg){ const t = new Date().toLocaleTimeString(); const el = document.createElement('div'); el.className = 'line'; el.textContent = `[${t}] ${msg}`; const box = document.getElementById('log'); box.prepend(el); const lines = box.querySelectorAll('.line'); if (lines.length > 150) lines[lines.length-1].remove(); }
+        function updateTrafficLights() {
             fetch('/traffic_data')
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    let redLight = document.getElementById("red-light");
-                    let orangeLight = document.getElementById("orange-light");
-                    let greenLight = document.getElementById("green-light");
-                    let timerDiv = document.getElementById("timer");
-                    let vehicleCountDiv = document.getElementById("vehicle-count");
-                    let signalTimeDiv = document.getElementById("signal-time");
-                    let signalStatusDiv = document.getElementById("signal-status");
-                    let statusBadge = document.getElementById("status-badge");
-
-                    // Update YOLO status
-                    yoloAvailable = data.yolo_available;
-                    if (yoloAvailable) {
-                        statusBadge.innerHTML = '<span class="status-yolo">🤖 YOLO Mode Active</span>';
-                    } else {
-                        statusBadge.innerHTML = '<span class="status-demo">🎭 Demo Mode</span>';
-                    }
-
-                    // Reset all lights
-                    redLight.className = "light";
-                    orangeLight.className = "light";
-                    greenLight.className = "light";
-
-                    if (data.light === "GREEN") {
-                        if (data.timer > 3) {
-                            greenLight.className = "light green";
-                            signalStatusDiv.innerText = "Green Signal";
-                            signalStatusDiv.className = "green-text";
-                        } else {
-                            orangeLight.className = "light orange";
-                            signalStatusDiv.innerText = "Orange Signal (Warning)";
-                            signalStatusDiv.className = "";
-                            signalStatusDiv.style.color = "#ffa500";
-                        }
-                    } else {
-                        redLight.className = "light red";
-                        signalStatusDiv.innerText = "Red Signal";
-                        signalStatusDiv.className = "";
-                        signalStatusDiv.style.color = "#ff0000";
-                    }
-
-                    timerDiv.innerText = data.timer;
-                    vehicleCountDiv.innerText = data.vehicle_count;
-                    signalTimeDiv.innerText = data.signal_time + "s";
-                })
-                .catch(error => {
-                    console.error("Error fetching traffic data:", error);
-                    showError("Failed to fetch traffic data. Check server connection.");
-                });
-        }
-
-        function toggleLight() {
-            fetch('/toggle_light')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        showError("Error toggling light: " + data.error);
-                    } else {
-                        updateTrafficLight();
+                    const remainingTime = data.timer; const total = data.total_vehicles || 0; const priority = (data.priority_lane || 0);
+                    document.getElementById('chip-total').innerText = total; document.getElementById('chip-priority').innerText = 'Lane ' + (priority + 1); document.getElementById('timer').innerText = remainingTime; document.getElementById('kpi-total').innerText = total; document.getElementById('kpi-priority').innerText = 'Lane ' + (priority + 1); document.getElementById('pill-total').innerText = total; document.getElementById('pill-priority').innerText = 'Lane ' + (priority + 1);
+                    if (priority !== prevPriority) { logLine(`Priority changed to Lane ${priority + 1}`); prevPriority = priority; } if (total !== prevTotals) { logLine(`Total vehicles updated: ${total}`); prevTotals = total; }
+                    for (let i = 0; i < 4; i++) {
+                        const red = document.getElementById('red-light-' + i), orange = document.getElementById('orange-light-' + i), green = document.getElementById('green-light-' + i), timeDiv = document.getElementById('time-' + i), countDiv = document.getElementById('count-' + i), badge = document.getElementById('badge-' + i), etaFill = document.getElementById('eta-fill-' + i);
+                        red.className = 'light'; orange.className = 'light'; green.className = 'light'; if (data.lights[i] === 'GREEN') { if (remainingTime > 3) green.className = 'light on green'; else orange.className = 'light on orange'; } else { red.className = 'light on red'; }
+                        const eta = (data.signal_times[i] || 10); timeDiv.innerText = eta + 's'; countDiv.innerText = data.lane_counts[i] || 0; badge.style.display = (i === priority) ? 'inline-block' : 'none'; if (i === priority && eta > 0) { const pct = Math.max(0, Math.min(100, (1 - (remainingTime / eta)) * 100)); etaFill.style.width = pct + '%'; } else { etaFill.style.width = '0%'; }
                     }
                 })
-                .catch(error => {
-                    console.error("Error toggling light:", error);
-                    showError("Failed to toggle traffic light.");
-                });
+                .catch(() => {});
         }
-
-        function toggleAuto() {
-            autoMode = !autoMode;
-            const btn = document.getElementById("auto-btn");
-            
-            if (autoMode) {
-                btn.innerText = "Auto Mode: ON";
-                btn.style.background = "#28a745";
-                // Start auto mode - update timer every second
-                autoInterval = setInterval(() => {
-                    fetch('/update_timer')
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.error) {
-                                showError("Error updating timer: " + data.error);
-                            } else {
-                                updateTrafficLight();
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error updating timer:", error);
-                            showError("Failed to update timer.");
-                        });
-                }, 1000);
-            } else {
-                btn.innerText = "Auto Mode: OFF";
-                btn.style.background = "#007bff";
-                clearInterval(autoInterval);
-            }
+        function drawChartInit(){ const c = document.getElementById('chart'); chartCtx = c.getContext('2d'); chartData = { times: [], total: [], lanes: [[],[],[],[]] }; }
+        function drawChart(data){ const c = document.getElementById('chart'); const ctx = chartCtx; const W = c.width = c.clientWidth; const H = c.height = c.clientHeight; ctx.clearRect(0,0,W,H);
+            const pad = 28; const maxY = Math.max(10, ...data.total); const scaleX = (W - pad*2) / Math.max(1, data.total.length - 1); const scaleY = (H - pad*2) / maxY; function line(series, color){ ctx.beginPath(); series.forEach((v,i)=>{ const x = pad + i*scaleX; const y = H - pad - v*scaleY; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke(); }
+            // grid
+            ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1; for(let gy=0; gy<=5; gy++){ const y = pad + gy*(H-pad*2)/5; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W-pad, y); ctx.stroke(); }
+            // series
+            line(data.total, '#22d3ee'); // total
+            const colors = ['#34d399','#60a5fa','#fbbf24','#f87171']; for(let i=0;i<4;i++){ line(data.lanes[i], colors[i]); }
+            // legend
+            const labels = ['Total','Lane 1','Lane 2','Lane 3','Lane 4']; const lcols = ['#22d3ee',...colors]; ctx.font = '12px Inter, sans-serif'; labels.forEach((t,i)=>{ ctx.fillStyle = lcols[i]; ctx.fillRect(pad + i*90, H-pad+8, 10, 10); ctx.fillStyle = '#cbd5e1'; ctx.fillText(t, pad + i*90 + 16, H-pad+18); });
         }
-
-        function restartYOLO() {
-            fetch('/restart')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status.includes("successfully")) {
-                        showMessage("YOLO model restarted successfully!", "success");
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
-                    } else {
-                        showError("Failed to restart YOLO: " + data.status);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error restarting YOLO:", error);
-                    showError("Failed to restart YOLO model.");
-                });
-        }
-
-        function showError(message) {
-            const errorDiv = document.createElement("div");
-            errorDiv.className = "error-message";
-            errorDiv.innerHTML = `<strong>Error:</strong> ${message}`;
-            document.querySelector(".container").insertBefore(errorDiv, document.querySelector(".container").firstChild);
-            
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 5000);
-        }
-
-        function showMessage(message, type) {
-            const messageDiv = document.createElement("div");
-            messageDiv.className = type === "success" ? "info-box" : "error-message";
-            messageDiv.innerHTML = `<strong>Message:</strong> ${message}`;
-            document.querySelector(".container").insertBefore(messageDiv, document.querySelector(".container").firstChild);
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 5000);
-        }
-
-        // Update traffic light every second
-        setInterval(updateTrafficLight, 1000);
-        
-        // Initial update
-        updateTrafficLight();
-
-        // Handle video feed errors
-        document.getElementById("video-feed").onerror = function() {
-            showError("Video feed failed to load. Check if the server is running.");
-        };
+        function refreshAnalytics(){ fetch('/analytics_data').then(r=>r.json()).then(data=>{ drawChart(data); }).catch(()=>{}); }
+        setInterval(updateTrafficLights, 1000); updateTrafficLights(); drawChartInit(); setInterval(refreshAnalytics, 2000); refreshAnalytics();
+        document.getElementById('btn-menu')?.addEventListener('click', ()=>{ document.body.classList.toggle('sidebar-open'); });
+        document.getElementById('btn-theme').onclick = ()=>{ document.querySelectorAll('.chip').forEach(c => c.style.boxShadow = c.style.boxShadow ? '' : '0 12px 28px rgba(34,211,238,.22), inset 0 0 14px rgba(167,139,250,.18)'); };
+        document.getElementById('btn-refresh').onclick = ()=>{ updateTrafficLights(); refreshAnalytics(); };
     </script>
 </body>
 </html>

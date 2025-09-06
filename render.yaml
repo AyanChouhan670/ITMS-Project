@@ -8,3 +8,11 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.7
+      - key: FAST_MODE
+        value: "1"
+      - key: INFER_EVERY
+        value: "8"
+      - key: COUNT_SMOOTH_ALPHA
+        value: "0.4"
+      - key: ANALYTICS_POINTS
+        value: "60"
